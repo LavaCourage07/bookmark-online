@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react'
-import { Plus, Settings, BookOpen, Chrome, Moon, Sun, Mail, Lock, Download, Upload } from 'lucide-react'
+import { Plus, Settings, BookOpen, Chrome, Moon, Sun, Mail, Lock, Download } from 'lucide-react'
 import { useAuth } from '~hooks/useAuth'
 import { useBookmarks } from '~hooks/useBookmarks'
 import { Button } from '~components/ui/Button'
 import { Input } from '~components/ui/Input'
+import { Select } from '~components/ui/Select'
+import { ThemeProvider, useTheme } from '~components/ThemeProvider'
 import '~style.css'
 
-function IndexPopup() {
+function PopupContent() {
   const { user, loading: authLoading, signIn, signUp, signOut } = useAuth()
   const { createBookmark, groups, getCurrentPageInfo, importBrowserBookmarks, importing } = useBookmarks(user?.id || null)
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const { theme, toggleTheme } = useTheme()
   const [pageInfo, setPageInfo] = useState<any>(null)
   const [showAddForm, setShowAddForm] = useState(false)
   const [importMessage, setImportMessage] = useState<string | null>(null)
@@ -26,13 +28,6 @@ function IndexPopup() {
     isSignUp: false
   })
 
-  // 初始化主题
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'light'
-    setTheme(savedTheme)
-    document.documentElement.classList.toggle('dark', savedTheme === 'dark')
-  }, [])
-
   // 获取当前页面信息
   useEffect(() => {
     if (user) {
@@ -46,14 +41,6 @@ function IndexPopup() {
       })
     }
   }, [user, getCurrentPageInfo])
-
-  // 切换主题
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    localStorage.setItem('theme', newTheme)
-    document.documentElement.classList.toggle('dark', newTheme === 'dark')
-  }
 
   // 添加书签
   const handleAddBookmark = async () => {
@@ -87,7 +74,7 @@ function IndexPopup() {
   const handleImportBookmarks = async () => {
     const result = await importBrowserBookmarks()
     setImportMessage(result.message)
-    
+
     // 3秒后清除消息
     setTimeout(() => {
       setImportMessage(null)
@@ -103,21 +90,40 @@ function IndexPopup() {
   }
 
   return (
-    <div className="w-80 min-h-64 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="w-96 min-h-[480px]" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       {/* 头部 */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-        <h1 className="text-lg font-semibold">智能书签</h1>
+      <div className="flex items-center justify-between p-5 border-b" style={{
+        borderColor: 'var(--border-color)',
+        background: 'var(--bg-secondary)',
+        backdropFilter: 'blur(20px)'
+      }}>
+        <h1 className="text-xl font-semibold" style={{
+          background: 'var(--accent-color)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>
+          智能书签
+        </h1>
         <div className="flex items-center space-x-2">
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
+            style={{
+              background: 'var(--bg-accent)',
+              color: 'var(--text-secondary)'
+            }}
           >
             {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           </button>
           {user && (
             <button
               onClick={openBookmarkManager}
-              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
+              style={{
+                background: 'var(--bg-accent)',
+                color: 'var(--text-secondary)'
+              }}
             >
               <Settings size={16} />
             </button>
@@ -132,14 +138,14 @@ function IndexPopup() {
             {/* 用户信息 */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Chrome size={20} />
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <Chrome size={20} style={{ color: 'var(--text-secondary)' }} />
+                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                   {user.email}
                 </span>
               </div>
               <button
                 onClick={signOut}
-                className="text-sm text-red-600 hover:text-red-700"
+                className="text-sm text-red-600 hover:text-red-700 transition-colors"
               >
                 退出
               </button>
@@ -147,38 +153,45 @@ function IndexPopup() {
 
             {/* 导入消息 */}
             {importMessage && (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md p-2">
-                <p className="text-sm text-green-700 dark:text-green-300">{importMessage}</p>
+              <div className="rounded-xl p-3 animate-slide-in" style={{
+                background: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.2)'
+              }}>
+                <p className="text-sm text-green-600">{importMessage}</p>
               </div>
             )}
 
             {/* 导入书签按钮 */}
-            <Button
+            {/* <Button
               onClick={handleImportBookmarks}
               disabled={importing}
               className="w-full"
               variant="secondary"
-              icon={importing ? <div className="loading-spinner" /> : <Download size={16} />}
+              icon={importing ? <div className="loading-spinner w-4 h-4" /> : <Download size={16} />}
             >
               {importing ? '导入中...' : '导入浏览器书签'}
-            </Button>
+            </Button> */}
 
             {/* 当前页面信息 */}
             {pageInfo && (
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
+              <div className="rounded-xl p-3" style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
+                boxShadow: 'var(--shadow-sm)'
+              }}>
                 <div className="flex items-start space-x-3">
                   {pageInfo.favicon && (
-                    <img 
-                      src={pageInfo.favicon} 
-                      alt="" 
+                    <img
+                      src={pageInfo.favicon}
+                      alt=""
                       className="w-5 h-5 mt-0.5 rounded"
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium truncate">
+                    <h3 className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
                       {pageInfo.title}
                     </h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
                       {pageInfo.url}
                     </p>
                   </div>
@@ -207,18 +220,26 @@ function IndexPopup() {
                   value={formData.url}
                   onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                 />
-                <select
+                <Select
                   value={formData.groupId}
-                  onChange={(e) => setFormData({ ...formData, groupId: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                >
-                  <option value="">选择分组</option>
-                  {groups.map((group) => (
-                    <option key={group.id} value={group.id}>
-                      {group.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value) => {
+                    console.log('Popup: 接收到分组选择', { 
+                      value, 
+                      currentFormData: formData,
+                      groups: groups.map(g => ({ id: g.id, name: g.name }))
+                    })
+                    setFormData(prev => ({ ...prev, groupId: value }))
+                  }}
+                  placeholder="选择分组"
+                  options={[
+                    { value: '', label: '未分组' },
+                    ...groups.map(group => ({
+                      value: group.id,
+                      label: group.name,
+                      color: group.color || undefined
+                    }))
+                  ]}
+                />
                 <div className="flex space-x-2">
                   <Button onClick={handleAddBookmark} className="flex-1">
                     保存
@@ -235,27 +256,38 @@ function IndexPopup() {
             )}
 
             {/* 快捷操作 */}
-            <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-              <Button
+            <div className="pt-2 border-t" style={{ borderColor: 'var(--border-color)' }}>
+              {/* <Button
                 variant="outline"
                 onClick={openBookmarkManager}
                 className="w-full"
                 icon={<BookOpen size={16} />}
               >
                 书签管理
+              </Button> */}
+              <Button
+                onClick={handleImportBookmarks}
+                disabled={importing}
+                className="w-full"
+                variant="secondary"
+                icon={importing ? <div className="loading-spinner w-4 h-4" /> : <Download size={16} />}
+              >
+                {importing ? '同步中...' : '同步当前浏览器书签'}
               </Button>
+              {/* 批量导入 */}
             </div>
+
           </div>
         ) : (
           <div className="text-center space-y-4">
             <div className="py-4">
-              <BookOpen size={48} className="mx-auto text-gray-400 mb-4" />
-              <h2 className="text-lg font-semibold mb-2">欢迎使用智能书签</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <BookOpen size={48} className="mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
+              <h2 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>欢迎使用智能书签</h2>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 {loginForm.isSignUp ? '创建新账户' : '登录后即可开始管理您的书签'}
               </p>
             </div>
-            
+
             <div className="space-y-3">
               <div className="space-y-2">
                 <Input
@@ -271,7 +303,7 @@ function IndexPopup() {
                   onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                 />
               </div>
-              
+
               <Button
                 onClick={async () => {
                   if (loginForm.isSignUp) {
@@ -286,10 +318,11 @@ function IndexPopup() {
               >
                 {loginForm.isSignUp ? '注册' : '登录'}
               </Button>
-              
+
               <button
                 onClick={() => setLoginForm({ ...loginForm, isSignUp: !loginForm.isSignUp })}
-                className="text-sm text-primary-600 hover:text-primary-700 w-full"
+                className="text-sm w-full transition-colors hover:opacity-80"
+                style={{ color: '#6366f1' }}
               >
                 {loginForm.isSignUp ? '已有账户？点击登录' : '没有账户？点击注册'}
               </button>
@@ -298,6 +331,14 @@ function IndexPopup() {
         )}
       </div>
     </div>
+  )
+}
+
+function IndexPopup() {
+  return (
+    <ThemeProvider>
+      <PopupContent />
+    </ThemeProvider>
   )
 }
 

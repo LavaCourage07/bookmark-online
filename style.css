@@ -2,163 +2,1445 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* 基础变量 */
+/* Design System - 基于 grid-bookmark-craft 的设计系统 */
 :root {
-  --primary-color: #0ea5e9;
-  --primary-hover: #0284c7;
-  --secondary-color: #6b7280;
-  --success-color: #10b981;
-  --error-color: #ef4444;
-  --warning-color: #f59e0b;
-  --border-radius: 8px;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  /* Light theme */
+  --bg-primary: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --bg-secondary: rgba(255, 255, 255, 0.95);
+  --bg-accent: rgba(248, 250, 252, 0.8);
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --border-color: rgba(226, 232, 240, 0.8);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --accent-color: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --accent-hover: linear-gradient(135deg, #5855eb 0%, #7c3aed 100%);
+
+  /* Animation System */
+  --ease-out-cubic: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out-cubic: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --duration-fast: 0.2s;
+  --duration-normal: 0.3s;
+  --duration-slow: 0.4s;
+
+  /* Spacing System */
+  --sidebar-width: 280px;
+  --sidebar-collapsed: 64px;
 }
 
-/* 暗色主题 */
-.dark {
-  --bg-primary: #1f2937;
-  --bg-secondary: #374151;
-  --text-primary: #f9fafb;
-  --text-secondary: #d1d5db;
-  --border-color: #4b5563;
+[data-theme="dark"] {
+  /* Dark theme */
+  --bg-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --bg-secondary: rgba(30, 41, 59, 0.95);
+  --bg-accent: rgba(51, 65, 85, 0.8);
+  --bg-card: rgba(30, 41, 59, 0.9);
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-color: rgba(51, 65, 85, 0.8);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --accent-color: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --accent-hover: linear-gradient(135deg, #5855eb 0%, #7c3aed 100%);
 }
 
-/* 浅色主题 */
-.light {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --border-color: #e5e7eb;
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  animation: pageLoad 0.8s ease-out;
+}
+
+/* 微妙的背景动效 */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+      circle at 25% 25%,
+      rgba(99, 102, 241, 0.02) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(139, 92, 246, 0.02) 0%,
+      transparent 50%
+    );
+  pointer-events: none;
+  z-index: -1;
+  animation: backgroundShift 20s ease-in-out infinite;
 }
 
 /* 滚动条样式 */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-accent);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
+  background: var(--border-color);
+  border-radius: 4px;
+  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: var(--text-muted);
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #4b5563;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
-}
-
-/* 动画效果 */
-@keyframes fadeIn {
+/* Animation System - 基于 grid-bookmark-craft 的动画系统 */
+@keyframes pageLoad {
   from {
     opacity: 0;
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateY(-10px);
-    opacity: 0;
-  }
-  to {
     transform: translateY(0);
-    opacity: 1;
   }
 }
 
-@keyframes scaleIn {
+@keyframes containerFadeIn {
   from {
-    transform: scale(0.9);
     opacity: 0;
+    transform: scale(0.98);
   }
   to {
+    opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes listItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes modalBackdropFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(10px);
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes backgroundShift {
+  0%,
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(5px) translateY(-5px);
+  }
+  50% {
+    transform: translateX(-5px) translateY(5px);
+  }
+  75% {
+    transform: translateX(-5px) translateY(-5px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loadingPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
     opacity: 1;
   }
 }
 
-/* 工具类 */
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-in-out;
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
 }
 
-.animate-slide-in {
-  animation: slideIn 0.3s ease-in-out;
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
 }
 
-.animate-scale-in {
-  animation: scaleIn 0.2s ease-in-out;
+/* Utility Classes - 动画工具类 */
+.animate-bounce {
+  animation: bounce 1s ease-in-out;
 }
 
-/* 书签卡片样式 */
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.animate-pulse {
+  animation: loadingPulse 2s ease-in-out infinite;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.clickable:active {
+  transform: scale(0.95);
+}
+
+/* Component Styles - 基于 grid-bookmark-craft 的组件样式 */
+
+/* 书签卡片样式 - 缩小尺寸 */
 .bookmark-card {
-  @apply bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 cursor-pointer;
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 16px;
+  transition: all 0.4s var(--ease-out-cubic);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(20px);
+  animation: cardFadeIn 0.6s ease-out both;
+  animation-delay: calc(var(--card-index, 0) * 0.1s);
+  min-height: 140px;
+  max-height: 160px;
+  display: flex;
+  flex-direction: column;
 }
 
+/* 书签卡片hover效果 - 整体边框高亮，去掉顶部条带 */
 .bookmark-card:hover {
-  @apply shadow-lg transform -translate-y-0.5;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+/* 明暗模式下的边框高亮效果 */
+[data-theme="light"] .bookmark-card:hover {
+  border: 2px solid rgba(99, 102, 241, 0.6);
+}
+
+[data-theme="dark"] .bookmark-card:hover {
+  border: 2px solid rgba(99, 102, 241, 0.8);
+}
+
+.bookmark-card:active {
+  transform: translateY(-4px) scale(0.98);
+}
+
+/* 书签卡片列表视图样式 - 与网格模式保持一致 */
+.bookmark-card-list {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 16px;
+  transition: all 0.3s var(--ease-out-cubic);
+  cursor: pointer;
+  position: relative;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(20px);
+  animation: listItemFadeIn 0.4s ease-out both;
+  animation-delay: calc(var(--item-index, 0) * 0.05s);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 列表视图hover效果 - 与网格模式一致 */
+.bookmark-card-list:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+/* 明暗模式下的边框高亮效果 - 与网格模式一致 */
+[data-theme="light"] .bookmark-card-list:hover {
+  border: 2px solid rgba(99, 102, 241, 0.6);
+}
+
+[data-theme="dark"] .bookmark-card-list:hover {
+  border: 2px solid rgba(99, 102, 241, 0.8);
+}
+
+.bookmark-card-list:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* 操作按钮样式 */
+.action-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: none;
+  background: var(--bg-accent);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out-cubic);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-button:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-sm);
+}
+
+.action-button:active {
+  transform: scale(0.95);
+}
+
+.action-button-danger:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+[data-theme="dark"] .action-button-danger:hover {
+  background: rgba(220, 38, 38, 0.2);
+  color: #fca5a5;
+}
+
+/* 操作按钮光效 */
+.action-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.action-button:hover::before {
+  left: 100%;
+}
+
+/* 书签操作区域 - 去掉背景色 */
+.bookmark-actions {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s var(--ease-out-cubic);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bookmark-card:hover .bookmark-actions,
+.bookmark-card-list:hover .bookmark-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 收藏星标样式 */
+.bookmark-card .favorite-star {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  animation: bounce 0.6s ease-out;
+}
+
+/* 分组标签样式 */
+.group-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.group-tag:hover {
+  transform: scale(1.05);
+}
+
+/* Favicon 样式优化 */
+.bookmark-favicon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  object-fit: cover;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bookmark-favicon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.bookmark-favicon-placeholder {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--bg-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.bookmark-favicon-placeholder:hover {
+  background: var(--bg-secondary);
+  transform: scale(1.1);
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .bookmark-card {
+    padding: 14px;
+    min-height: 120px;
+    max-height: 140px;
+  }
+
+  .bookmark-card-list {
+    padding: 12px;
+  }
+
+  .action-button {
+    width: 28px;
+    height: 28px;
+  }
+
+  .bookmark-actions {
+    gap: 4px;
+  }
+}
+
+/* 侧边栏样式 */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(20px);
+  transition: all 0.4s var(--ease-out-cubic);
+  height: 100vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.sidebar-collapsed {
+  width: var(--sidebar-collapsed);
+}
+
+/* 侧边栏切换按钮 */
+.sidebar-toggle-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: none;
+  background: var(--bg-accent);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-cubic);
+}
+
+.sidebar-toggle-btn:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-sm);
+}
+
+/* 侧边栏项目 */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-cubic);
+  margin-bottom: 4px;
+  border: 1px solid transparent;
+  animation: listItemFadeIn 0.4s ease-out both;
+  animation-delay: calc(var(--item-index, 0) * 0.05s);
+}
+
+/* 【全部标签】和【未分组】的hover和选中样式 - 无边框 */
+.sidebar-item:hover {
+  background: var(--bg-accent);
+  transform: translateX(4px) scale(1.02);
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-item.active {
+  background: var(--bg-accent);
+  transform: translateX(4px) scale(1.02);
+  box-shadow: var(--shadow-sm);
+}
+
+/* 【常规分组】的hover和选中样式 - 有边框 */
+.sidebar-group-item:hover {
+  background: var(--bg-accent);
+  transform: translateX(4px) scale(1.02);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-group-item.active {
+  background: var(--bg-accent);
+  border: 1px solid var(--accent-color);
+  transform: translateX(4px) scale(1.02);
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-item.active .sidebar-item-text,
+.sidebar-group-item.active .sidebar-item-text {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+/* 明暗模式下的阴影和边框优化 */
+/* 【全部标签】和【未分组】- 只有阴影，无边框 */
+[data-theme="light"] .sidebar-item:hover {
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+}
+
+[data-theme="light"] .sidebar-item.active {
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.25);
+}
+
+[data-theme="dark"] .sidebar-item:hover {
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="dark"] .sidebar-item.active {
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* 【常规分组】- 有阴影和边框 */
+[data-theme="light"] .sidebar-group-item:hover {
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="light"] .sidebar-group-item.active {
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.25);
+  border: 1px solid rgba(99, 102, 241, 0.6);
+}
+
+[data-theme="dark"] .sidebar-group-item:hover {
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+[data-theme="dark"] .sidebar-group-item.active {
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
+  border: 1px solid rgba(99, 102, 241, 0.8);
+}
+
+.sidebar-item-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-item-text {
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.sidebar-item-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-accent);
+  padding: 2px 8px;
+  border-radius: 12px;
+  min-width: 20px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.sidebar-item.active .sidebar-item-count,
+.sidebar-group-item.active .sidebar-item-count {
+  background: var(--accent-color);
+  color: white;
+}
+
+/* 分组项目样式 */
+.sidebar-group-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-cubic);
+  margin-bottom: 4px;
+  border: 1px solid transparent;
+  position: relative;
+  animation: listItemFadeIn 0.4s ease-out both;
+  animation-delay: calc(var(--item-index, 0) * 0.05s);
+}
+
+/* 移除收藏相关的样式 */
+.bookmark-card .favorite-star {
+  display: none;
+}
+
+/* 拖拽手柄 */
+.sidebar-drag-handle {
+  opacity: 0;
+  color: var(--text-muted);
+  cursor: grab;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.sidebar-group-item:hover .sidebar-drag-handle {
+  opacity: 1;
+}
+
+.sidebar-drag-handle:active {
+  cursor: grabbing;
+}
+
+.sidebar-drag-handle:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* 分组操作按钮 */
+.sidebar-group-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.3s var(--ease-out-cubic);
+}
+
+.sidebar-group-item:hover .sidebar-group-actions {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sidebar-action-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: none;
+  background: var(--bg-accent);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out-cubic);
+}
+
+.sidebar-action-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+.sidebar-action-btn-danger:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+[data-theme="dark"] .sidebar-action-btn-danger:hover {
+  background: rgba(220, 38, 38, 0.2);
+  color: #fca5a5;
+}
+
+/* 折叠状态的侧边栏项目 */
+.sidebar-item-collapsed {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-cubic);
+  margin-bottom: 8px;
+}
+
+.sidebar-item-collapsed:hover {
+  background: var(--bg-accent);
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+.sidebar-item-collapsed.active {
+  background: var(--accent-color);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.sidebar-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--accent-color);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.sidebar-item-collapsed.active .sidebar-badge {
+  background: white;
+  color: var(--accent-color);
+}
+
+/* 拖拽状态样式 */
+.sidebar-group-item[style*="dashed"] {
+  background: var(--bg-accent);
+  border-color: var(--accent-color) !important;
+  border-style: dashed !important;
+}
+
+/* 滚动条样式 */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-collapsed {
+    transform: translateX(-100%);
+  }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .bookmark-card,
+  .bookmark-card-list {
+    border-width: 2px;
+  }
+
+  .action-button {
+    border: 1px solid var(--border-color);
+  }
+
+  .sidebar-item,
+  .sidebar-group-item {
+    border-width: 2px;
+  }
 }
 
 /* 按钮样式 */
-.btn {
-  @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+.btn-primary {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-cubic);
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.btn-primary {
-  @apply btn bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500;
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.95);
 }
 
 .btn-secondary {
-  @apply btn bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600;
+  background: var(--bg-accent);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-cubic);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.btn-danger {
-  @apply btn bg-red-500 text-white hover:bg-red-600 focus:ring-red-500;
+.btn-secondary:hover {
+  background: var(--bg-secondary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-outline {
-  @apply btn border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s var(--ease-out-cubic);
+  box-shadow: var(--shadow-sm);
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-outline:hover {
+  background: var(--bg-accent);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-color);
+}
+
+.btn-outline:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s var(--ease-out-cubic);
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ghost:hover {
+  background: var(--bg-accent);
+  color: var(--text-primary);
+  transform: translateY(-1px) scale(1.02);
+}
+
+.btn-ghost:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-cubic);
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-md);
 }
 
 /* 输入框样式 */
-.input {
-  @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white;
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.3s var(--ease-out-cubic);
+  background: var(--bg-accent);
+  color: var(--text-primary);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  transform: translateY(-2px);
+  background: var(--bg-card);
+}
+
+/* Input 变体样式 */
+.input-filled {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.3s var(--ease-out-cubic);
+  background: var(--bg-accent);
+  color: var(--text-primary);
+}
+
+.input-filled:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-color);
+  transform: translateY(-1px);
+  background: var(--bg-card);
+}
+
+.input-outlined {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.3s var(--ease-out-cubic);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.input-outlined:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Input 状态样式 */
+.input-focused {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.input-success {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+/* 输入框占位符样式 */
+.form-input::placeholder,
+.input-filled::placeholder,
+.input-outlined::placeholder {
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.form-input:focus::placeholder,
+.input-filled:focus::placeholder,
+.input-outlined:focus::placeholder {
+  color: var(--text-secondary);
 }
 
 /* 模态框样式 */
-.modal-overlay {
-  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  animation: modalBackdropFadeIn 0.3s ease-out;
 }
 
 .modal-content {
-  @apply bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto;
+  background: var(--bg-card);
+  border-radius: 24px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  animation: modalSlideIn 0.4s var(--ease-out-cubic);
+  backdrop-filter: blur(20px);
 }
 
 /* 加载动画 */
 .loading-spinner {
-  @apply animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500;
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* 页面容器动画 */
+.page-container {
+  animation: containerFadeIn 0.8s ease-out;
+}
+
+.content-section {
+  animation: slideUp 0.6s ease-out both;
+  animation-delay: 0.2s;
+}
+
+.sidebar-section {
+  animation: slideDown 0.6s ease-out both;
+  animation-delay: 0.1s;
+}
+
+/* 列表项渐进动画 */
+.list-item {
+  animation: listItemFadeIn 0.4s ease-out both;
+  animation-delay: calc(var(--item-index, 0) * 0.05s);
+}
+
+/* 内容区域高度控制 */
+.content-section {
+  height: calc(100vh - 64px); /* 减去header高度 */
+  overflow-y: auto;
+  animation: slideUp 0.6s ease-out both;
+  animation-delay: 0.2s;
+}
+
+/* 网格布局优化 - 缩小网格尺寸 */
+.bookmarks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  padding: 20px 0;
+}
+
+.bookmarks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 0;
+}
+
+/* 空状态样式 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.empty-state-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+/* 通知样式 */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(20px);
+  z-index: 1001;
+  animation: slideDown 0.4s ease-out;
+  max-width: 400px;
+}
+
+.notification.success {
+  background: rgba(34, 197, 94, 0.9);
+  color: white;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.notification.error {
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.notification.warning {
+  background: rgba(245, 158, 11, 0.9);
+  color: white;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* 骨架屏样式 */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-accent) 25%,
+    var(--bg-secondary) 50%,
+    var(--bg-accent) 75%
+  );
+  background-size: 200% 100%;
+  animation: loadingPulse 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+.skeleton-card {
+  height: 160px;
+  border-radius: 20px;
+}
+
+.skeleton-text {
+  height: 16px;
+  margin-bottom: 8px;
+}
+
+.skeleton-text.short {
+  width: 60%;
+}
+
+.skeleton-text.long {
+  width: 80%;
 }
 
 /* 响应式设计 */
-@media (max-width: 640px) {
+@media (max-width: 1200px) {
+  .bookmarks-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 100%;
+  }
+
+  .bookmarks-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+    padding: 16px 0;
+  }
+
   .bookmark-card {
-    @apply p-3;
+    padding: 16px;
+    min-height: 140px;
+    animation-delay: calc(var(--card-index, 0) * 0.05s);
   }
-  
-  .btn {
-    @apply px-3 py-1.5 text-xs;
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline {
+    padding: 10px 16px;
+    font-size: 13px;
   }
-} 
+
+  .form-input {
+    padding: 12px 14px;
+    font-size: 16px; /* 防止iOS缩放 */
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 20px;
+    border-radius: 20px;
+  }
+
+  .notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .bookmarks-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .bookmark-card {
+    padding: 14px;
+    min-height: 120px;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+/* 平板横屏优化 */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .bookmarks-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+
+  .bookmark-card {
+    min-height: 140px;
+    padding: 16px;
+  }
+}
+
+/* 高分辨率屏幕优化 */
+@media (min-width: 1400px) {
+  .bookmarks-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .bookmark-card {
+    min-height: 180px;
+    padding: 24px;
+  }
+}
+
+/* 减少动画偏好支持 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .bookmark-card:hover {
+    transform: none;
+  }
+
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .btn-outline:hover {
+    transform: none;
+  }
+}
+
+/* 自定义Select组件样式 */
+.custom-select-dropdown {
+  background: var(--bg-card) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 明暗模式下的不透明背景 */
+[data-theme="light"] .custom-select-dropdown {
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+[data-theme="dark"] .custom-select-dropdown {
+  background: rgba(30, 41, 59, 1) !important;
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  :root {
+    --border-color: #000000;
+    --text-secondary: #000000;
+  }
+
+  [data-theme="dark"] {
+    --border-color: #ffffff;
+    --text-secondary: #ffffff;
+  }
+
+  .bookmark-card {
+    border-width: 2px;
+  }
+
+  .form-input {
+    border-width: 2px;
+  }
+}
