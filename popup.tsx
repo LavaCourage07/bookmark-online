@@ -5,6 +5,7 @@ import { useBookmarks } from '~hooks/useBookmarks'
 import { Button } from '~components/ui/Button'
 import { Input } from '~components/ui/Input'
 import { PopupSelect } from '~components/ui/PopupSelect'
+import { UserAvatar } from '~components/ui/UserAvatar'
 import { ThemeProvider, useTheme } from '~components/ThemeProvider'
 import '~style.css'
 
@@ -98,29 +99,29 @@ function PopupContent() {
   // 处理创建新分组
   const handleCreateGroup = async (groupName: string): Promise<string> => {
     try {
-      console.log('🆕 创建新分组:', { 
-        groupName, 
+      console.log('🆕 创建新分组:', {
+        groupName,
         userId: user?.id,
         currentGroupsCount: groups.length,
         currentGroups: groups.map(g => ({ id: g.id, name: g.name }))
       })
-      
+
       // 调用createGroup函数创建分组，使用主题色作为默认颜色
       const newGroup = await createGroup({
         name: groupName,
         color: '#6366f1' // 使用主题色作为默认颜色
       })
-      
-      console.log('✅ 分组创建成功:', { 
+
+      console.log('✅ 分组创建成功:', {
         newGroup,
         newGroupId: newGroup?.id,
         newGroupName: newGroup?.name
       })
-      
+
       if (!newGroup || !newGroup.id) {
         throw new Error('创建分组失败：返回数据为空或缺少ID')
       }
-      
+
       // 等待状态更新后再检查
       setTimeout(() => {
         console.log('📊 延迟检查分组列表:', {
@@ -129,7 +130,7 @@ function PopupContent() {
           isNewGroupInList: groups.some(g => g.id === newGroup.id)
         })
       }, 500)
-      
+
       return newGroup.id
     } catch (error) {
       console.error('❌ 创建分组失败:', error)
@@ -192,6 +193,7 @@ function PopupContent() {
               <Settings size={16} />
             </button>
           )}
+          {user && <UserAvatar user={user} onSignOut={signOut} />}
         </div>
       </div>
 
@@ -199,21 +201,7 @@ function PopupContent() {
       <div className="p-4">
         {user ? (
           <div className="space-y-4">
-            {/* 用户信息 */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Chrome size={20} style={{ color: 'var(--text-secondary)' }} />
-                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                  {user.email}
-                </span>
-              </div>
-              <button
-                onClick={signOut}
-                className="text-sm text-red-600 hover:text-red-700 transition-colors"
-              >
-                退出
-              </button>
-            </div>
+
 
             {/* 导入消息 */}
             {importMessage && (

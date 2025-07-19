@@ -261,16 +261,12 @@ export function Sidebar({
               
               {/* 分组内容 */}
               <div className="sidebar-item-content">
-                <div 
+                {/* <div 
                   className="w-3 h-3 rounded-full flex-shrink-0"
                   style={{ backgroundColor: group.color || 'var(--accent-color)' }}
-                />
+                /> */}
                 <span className="sidebar-item-text">{group.name}</span>
-              </div>
-              
-              <span className="sidebar-item-count">
-                {getGroupBookmarkCount(group.id)}
-              </span>
+              </div>     
               
               {/* 操作按钮 */}
               {hoveredGroupId === group.id && (
@@ -297,6 +293,10 @@ export function Sidebar({
                   </button>
                 </div>
               )}
+
+              <span className="sidebar-item-count ml-1">
+                {getGroupBookmarkCount(group.id)}
+              </span>
             </div>
           ))}
         </div>
