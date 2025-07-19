@@ -227,7 +227,7 @@ function NewTabContent() {
   }
 
   return (
-    <div className="min-h-screen page-container" style={{ background: 'var(--bg-primary)' }}>
+    <div className="min-h-screen page-container" style={{ background: 'var(--bg-primary)', overflow:'hidden' }}>
       {/* 头部 */}
       <header style={{
         background: 'var(--bg-secondary)',

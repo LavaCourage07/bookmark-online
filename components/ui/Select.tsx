@@ -34,6 +34,28 @@ export function Select({
 
   const selectedOption = options.find(option => option.value === value)
 
+  console.log('🚀 Select组件渲染:', { value, optionsLength: options.length, isOpen })
+
+  // 专门监听value变化
+  useEffect(() => {
+    console.log('� Seleect组件value变化:', {
+      newValue: value,
+      selectedOption: selectedOption?.label,
+      allOptions: options.map(o => ({ value: o.value, label: o.label }))
+    })
+  }, [value])
+
+  // 调试日志 - 组件状态变化
+  useEffect(() => {
+    console.log('🔍 Select组件状态:', {
+      isOpen,
+      value,
+      selectedOption: selectedOption?.label,
+      optionsCount: options.length,
+      highlightedIndex
+    })
+  }, [isOpen, value, selectedOption, options.length, highlightedIndex])
+
   // 计算下拉框位置
   useEffect(() => {
     if (isOpen && selectRef.current) {
@@ -51,27 +73,11 @@ export function Select({
     }
   }, [isOpen, options.length])
 
-  // 点击外部关闭下拉框 - 暂时禁用，专注修复选项点击
+  // 点击外部关闭下拉框 - 暂时禁用以测试选项点击
   useEffect(() => {
-    // 暂时注释掉点击外部关闭的逻辑，专注修复选项点击
-    // const handleClickOutside = (event: MouseEvent) => {
-    //   const target = event.target as Element
-    //   if (selectRef.current && !selectRef.current.parentElement?.contains(target)) {
-    //     setIsOpen(false)
-    //     setHighlightedIndex(-1)
-    //   }
-    // }
-
-    // if (isOpen) {
-    //   const timeoutId = setTimeout(() => {
-    //     document.addEventListener('click', handleClickOutside)
-    //   }, 100)
-      
-    //   return () => {
-    //     clearTimeout(timeoutId)
-    //     document.removeEventListener('click', handleClickOutside)
-    //   }
-    // }
+    console.log('⚠️ 点击外部关闭功能已暂时禁用，用于调试')
+    // 暂时完全禁用点击外部关闭功能
+    return
   }, [isOpen])
 
   // 键盘导航
@@ -126,30 +132,56 @@ export function Select({
     }
   }, [highlightedIndex, isOpen])
 
-  const handleToggle = () => {
+  const handleToggle = (event?: React.MouseEvent) => {
+    console.log('🔄 handleToggle被调用:', {
+      disabled,
+      currentIsOpen: isOpen,
+      willOpen: !isOpen,
+      eventTarget: event?.target,
+      eventType: event?.type
+    })
+
     if (!disabled) {
-      setIsOpen(!isOpen)
-      if (!isOpen) {
+      const newIsOpen = !isOpen
+      setIsOpen(newIsOpen)
+
+      if (newIsOpen) {
         // 打开时高亮当前选中项
         const currentIndex = options.findIndex(option => option.value === value)
         setHighlightedIndex(currentIndex >= 0 ? currentIndex : -1)
+        console.log('📂 下拉框打开，高亮索引:', currentIndex)
+      } else {
+        console.log('📁 下拉框关闭')
       }
+    } else {
+      console.log('🚫 Select被禁用，无法切换')
     }
   }
 
   const handleOptionClick = (optionValue: string) => {
-    console.log('Select组件: 点击选项', { 
-      optionValue, 
-      currentValue: value, 
-      selectedOption: options.find(o => o.value === optionValue)
+    console.log('🎯 handleOptionClick被调用:', {
+      optionValue,
+      currentValue: value,
+      selectedOption: options.find(o => o.value === optionValue),
+      onChange: typeof onChange
     })
-    
-    // 立即调用onChange
-    onChange(optionValue)
-    
-    // 立即关闭下拉框
-    setIsOpen(false)
-    setHighlightedIndex(-1)
+
+    try {
+      // 立即调用onChange
+      console.log('📞 调用onChange回调函数...')
+      onChange(optionValue)
+      console.log('✅ onChange调用成功')
+
+      // 延迟关闭下拉框，确保onChange先执行
+      setTimeout(() => {
+        console.log('📁 关闭下拉框...')
+        setIsOpen(false)
+        setHighlightedIndex(-1)
+        console.log('✅ 下拉框已关闭')
+      }, 50)
+    } catch (error) {
+      console.error('❌ handleOptionClick执行出错:', error)
+    }
   }
 
   return (
@@ -175,7 +207,10 @@ export function Select({
           color: 'var(--text-primary)',
           boxShadow: isOpen ? '0 0 0 3px rgba(99, 102, 241, 0.1)' : 'none'
         }}
-        onClick={handleToggle}
+        onClick={(e) => {
+          console.log('🔄 Select主容器被点击:', { target: e.target, currentTarget: e.currentTarget })
+          handleToggle(e)
+        }}
         tabIndex={disabled ? -1 : 0}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -221,7 +256,13 @@ export function Select({
             boxShadow: 'var(--shadow-lg)'
           }}
           onClick={(e) => {
+            console.log('🛑 下拉框容器被点击，阻止冒泡')
             // 阻止下拉框容器的点击事件冒泡
+            e.stopPropagation()
+          }}
+          onMouseDown={(e) => {
+            console.log('🛑 下拉框容器mousedown，阻止冒泡')
+            // 也阻止mousedown事件冒泡
             e.stopPropagation()
           }}
         >
@@ -242,9 +283,35 @@ export function Select({
                       : 'transparent',
                   color: value === option.value ? 'var(--accent-color)' : 'var(--text-primary)'
                 }}
-                onClick={(e) => {
+                onMouseDown={(e) => {
+                  console.log('🖱️ 选项mousedown事件:', {
+                    option: option.value,
+                    label: option.label,
+                    eventType: e.type,
+                    button: e.button,
+                    target: e.target
+                  })
+
+                  // 立即阻止事件传播
                   e.preventDefault()
                   e.stopPropagation()
+                  e.nativeEvent.stopImmediatePropagation()
+
+                  // 立即处理选项点击
+                  handleOptionClick(option.value)
+                }}
+                onClick={(e) => {
+                  console.log('🖱️ 选项click事件 (备用):', {
+                    option: option.value,
+                    label: option.label
+                  })
+
+                  // 立即阻止事件传播
+                  e.preventDefault()
+                  e.stopPropagation()
+                  e.nativeEvent.stopImmediatePropagation()
+
+                  // 立即处理选项点击
                   handleOptionClick(option.value)
                 }}
                 onMouseEnter={() => setHighlightedIndex(index)}

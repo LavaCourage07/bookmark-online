@@ -4,13 +4,13 @@ import { useAuth } from '~hooks/useAuth'
 import { useBookmarks } from '~hooks/useBookmarks'
 import { Button } from '~components/ui/Button'
 import { Input } from '~components/ui/Input'
-import { Select } from '~components/ui/Select'
+import { PopupSelect } from '~components/ui/PopupSelect'
 import { ThemeProvider, useTheme } from '~components/ThemeProvider'
 import '~style.css'
 
 function PopupContent() {
   const { user, loading: authLoading, signIn, signUp, signOut } = useAuth()
-  const { createBookmark, groups, getCurrentPageInfo, importBrowserBookmarks, importing } = useBookmarks(user?.id || null)
+  const { createBookmark, groups, getCurrentPageInfo, importBrowserBookmarks, importing, createGroup } = useBookmarks(user?.id || null)
   const { theme, toggleTheme } = useTheme()
   const [pageInfo, setPageInfo] = useState<any>(null)
   const [showAddForm, setShowAddForm] = useState(false)
@@ -20,6 +20,9 @@ function PopupContent() {
     url: '',
     groupId: ''
   })
+
+  // 控制popup容器的底部padding
+  const [isSelectOpen, setIsSelectOpen] = useState(false)
 
   // 登录表单状态
   const [loginForm, setLoginForm] = useState({
@@ -47,10 +50,21 @@ function PopupContent() {
     if (!formData.title || !formData.url) return
 
     try {
+      // 从DOM直接获取选中的分组值
+      const selectElement = (window as any).popupGroupSelect as HTMLSelectElement
+      const selectedGroupId = selectElement ? selectElement.value : formData.groupId
+      console.log('💾 保存书签:', {
+        title: formData.title,
+        url: formData.url,
+        group_id: selectedGroupId,
+        formDataGroupId: formData.groupId,
+        selectValue: selectElement?.value
+      })
+
       await createBookmark({
         title: formData.title,
         url: formData.url,
-        group_id: formData.groupId || null,
+        group_id: selectedGroupId || null,
         favicon: pageInfo?.favicon || null
       })
       setShowAddForm(false)
@@ -81,6 +95,48 @@ function PopupContent() {
     }, 3000)
   }
 
+  // 处理创建新分组
+  const handleCreateGroup = async (groupName: string): Promise<string> => {
+    try {
+      console.log('🆕 创建新分组:', { 
+        groupName, 
+        userId: user?.id,
+        currentGroupsCount: groups.length,
+        currentGroups: groups.map(g => ({ id: g.id, name: g.name }))
+      })
+      
+      // 调用createGroup函数创建分组，使用主题色作为默认颜色
+      const newGroup = await createGroup({
+        name: groupName,
+        color: '#6366f1' // 使用主题色作为默认颜色
+      })
+      
+      console.log('✅ 分组创建成功:', { 
+        newGroup,
+        newGroupId: newGroup?.id,
+        newGroupName: newGroup?.name
+      })
+      
+      if (!newGroup || !newGroup.id) {
+        throw new Error('创建分组失败：返回数据为空或缺少ID')
+      }
+      
+      // 等待状态更新后再检查
+      setTimeout(() => {
+        console.log('📊 延迟检查分组列表:', {
+          groupsCount: groups.length,
+          groups: groups.map(g => ({ id: g.id, name: g.name })),
+          isNewGroupInList: groups.some(g => g.id === newGroup.id)
+        })
+      }, 500)
+      
+      return newGroup.id
+    } catch (error) {
+      console.error('❌ 创建分组失败:', error)
+      throw error
+    }
+  }
+
   if (authLoading) {
     return (
       <div className="w-80 h-64 flex items-center justify-center">
@@ -90,7 +146,15 @@ function PopupContent() {
   }
 
   return (
-    <div className="w-96 min-h-[480px]" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+    <div
+      className={`w-96 min-h-[300px] ${isSelectOpen ? 'pb-24' : 'pb-4'}`}
+      style={{
+        background: 'var(--bg-primary)',
+        color: 'var(--text-primary)',
+        overflow: 'hidden',
+        transition: 'padding-bottom 0.2s ease-in-out' // 添加平滑过渡动画
+      }}
+    >
       {/* 头部 */}
       <div className="flex items-center justify-between p-5 border-b" style={{
         borderColor: 'var(--border-color)',
@@ -161,17 +225,6 @@ function PopupContent() {
               </div>
             )}
 
-            {/* 导入书签按钮 */}
-            {/* <Button
-              onClick={handleImportBookmarks}
-              disabled={importing}
-              className="w-full"
-              variant="secondary"
-              icon={importing ? <div className="loading-spinner w-4 h-4" /> : <Download size={16} />}
-            >
-              {importing ? '导入中...' : '导入浏览器书签'}
-            </Button> */}
-
             {/* 当前页面信息 */}
             {pageInfo && (
               <div className="rounded-xl p-3" style={{
@@ -220,16 +273,26 @@ function PopupContent() {
                   value={formData.url}
                   onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                 />
-                <Select
-                  value={formData.groupId}
+                <PopupSelect
+                  defaultValue={formData.groupId}
                   onChange={(value) => {
-                    console.log('Popup: 接收到分组选择', { 
-                      value, 
+                    console.log('🎯 PopupSelect接收到分组选择:', {
+                      value,
                       currentFormData: formData,
                       groups: groups.map(g => ({ id: g.id, name: g.name }))
                     })
-                    setFormData(prev => ({ ...prev, groupId: value }))
                   }}
+                  onSelectRef={(selectElement) => {
+                    // 将隐藏的select元素存储到全局变量中
+                    if (selectElement) {
+                      (window as any).popupGroupSelect = selectElement
+                    }
+                  }}
+                  onOpenChange={(isOpen) => {
+                    // 根据下拉框的开关状态动态调整popup容器的底部padding
+                    setIsSelectOpen(isOpen)
+                  }}
+                  onCreateGroup={handleCreateGroup}
                   placeholder="选择分组"
                   options={[
                     { value: '', label: '未分组' },
@@ -257,14 +320,6 @@ function PopupContent() {
 
             {/* 快捷操作 */}
             <div className="pt-2 border-t" style={{ borderColor: 'var(--border-color)' }}>
-              {/* <Button
-                variant="outline"
-                onClick={openBookmarkManager}
-                className="w-full"
-                icon={<BookOpen size={16} />}
-              >
-                书签管理
-              </Button> */}
               <Button
                 onClick={handleImportBookmarks}
                 disabled={importing}
@@ -274,7 +329,6 @@ function PopupContent() {
               >
                 {importing ? '同步中...' : '同步当前浏览器书签'}
               </Button>
-              {/* 批量导入 */}
             </div>
 
           </div>
@@ -342,4 +396,4 @@ function IndexPopup() {
   )
 }
 
-export default IndexPopup 
+export default IndexPopup
